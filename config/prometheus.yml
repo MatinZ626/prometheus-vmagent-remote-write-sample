@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 30s
+  scrape_timeout: 10s
+
+scrape_configs:
+
+
+  - job_name: 'node-exporter'
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets:
+          - "NODE-EXPORTER-IP:9100"

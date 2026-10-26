@@ -1,0 +1,37 @@
+services:
+  vmagent:
+    image: victoriametrics/vmagent:v1.154.1
+    container_name: vmagent
+    restart: unless-stopped
+
+    command:
+      - "-httpListenAddr=:8429"
+      - "-promscrape.config=/etc/vmagent/prometheus.yml"
+# set your Prometheus URL for -remoteWrite.url
+      - "-remoteWrite.url=https://YOUR-PROMETHEUS-URL/api/v1/write"
+      - "-remoteWrite.tmpDataPath=/vmagentdata"
+      - "-remoteWrite.maxDiskUsagePerURL=1GB"
+      - "-remoteWrite.forcePromProto"
+      - "-remoteWrite.queues=1"
+
+    ports:
+      - "127.0.0.1:8429:8429"
+
+    volumes:
+      - ./config/prometheus.yml:/etc/vmagent/prometheus.yml:ro
+      - vmagent-data:/vmagentdata
+
+    security_opt:
+      - no-new-privileges:true
+
+    cap_drop:
+      - ALL
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+volumes:
+  vmagent-data:
